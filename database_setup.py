@@ -41,11 +41,8 @@ class SectionItem(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String(250))
     category = Column(String(250))
-    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
-    restaurant = relationship(Restaurant)
-
-    restaurant_id = Column(Integer,ForeignKey('restaurant.id'))
-    restaurant = relationship(Restaurant)
+    section_id = Column(Integer, ForeignKey('section.id'))
+    section = relationship(Section)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
@@ -56,8 +53,7 @@ class SectionItem(Base):
            'name'         	: self.name,
            'description'   : self.description,
            'id'         	: self.id,
-           'price'         : self.price,
-           'course'        : self.course,
+           'category'      : self.category,
        }
 
 engine = create_engine('sqlite:///restaurantmenu.db')
