@@ -1,3 +1,5 @@
+import os
+import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -51,11 +53,11 @@ class SectionItem(Base):
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
-           'name'         : self.name,
-           'description'         : self.description,
-           'id'         : self.id,
+           'name'         	: self.name,
+           'description'   : self.description,
+           'id'         	: self.id,
            'price'         : self.price,
-           'course'         : self.course,
+           'course'        : self.course,
        }
 
 engine = create_engine('sqlite:///restaurantmenu.db')
