@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<!--<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">-->
+	</head>
+	<body>
+	<div class="pane">
+		<div class="header">
+			<h1>New Category</h1>
+		</div>
+		
+		<form action="#" method='POST'>
+			<p>Name:</p>
+			<input type='text' size='30' name='name' placeholder="Enter New Name">
+			<p>Description:</p>
+			<input type='text' size='30' name='name' placeholder="Enter Category Description">
+			<input type='submit' value='Submit'>
+			<a href='{{url_for('showCatalog')}}'>Cancel</a>
+		</form>
+	</div>
+	</body>
+</html>

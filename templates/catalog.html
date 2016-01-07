@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<!--<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">-->
+	</head>
+	<body>
+		<div class="pane">
+			<div class="header">
+				<h1>Categories</h1>
+			</div>
+
+			{% for category in categorys %}
+			<a href = "{{url_for('showCategory', category_name = category.name)}}"> <p class="categoryName">{{category.name}}</p></a>
+			{% endfor %}
+
+			<a href = "{{url_for('newCategory')}}"> <h3> Create a New Category </h3> </a>
+
+		</div>
+	</body>
+</html>
