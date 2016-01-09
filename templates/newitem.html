@@ -7,13 +7,13 @@
 			<div class="header">
 				<h1>New Category Item</h1>
 			</div>
-				<form action="{{url_for('newCategoryItem', category_name = category.name)}}" method='POST'>
+				<form action="{{url_for('newCategoryItem', category_name = category_name)}}" method='POST'>
 					<p>Name:</p>
 						<input type='text' size='30' name='name'>
 					<p>Description:</p>
 						<input type='text' size='30' name='description'>
 					<input type='submit' value='Create'>
-					<a href = '{{url_for('showCategory', category_name = category.name)}}'> Cancel </a>
+					<a href = '{{url_for('showCategory', category_name = category_name)}}'> Cancel </a>
 				</form>
 		</div>
 	</body>

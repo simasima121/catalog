@@ -10,10 +10,10 @@
 
 			<div class="deletenow">
 				<p>
-					<form action="{{ url_for('deleteCategoryItem',item_name=item.name, category_name=category.name)}}" method = 'post'>
+					<form action="{{ url_for('deleteCategoryItem',item_name=item.name, category_name=category_name)}}" method = 'post'>
 						<input type='submit', value = 'Delete'>
 					</form>
-					<a href = '{{url_for('showCategoryItem', item_name=item.name, category_name=category.name)}}'> Cancel </a>
+					<a href = '{{url_for('showCategoryItem', item_name=item.name, category_name=category_name)}}'> Cancel </a>
 				</p>
 			</div>
 		</div>
