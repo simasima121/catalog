@@ -1,27 +1,59 @@
+{% include "header.html" %}
+{% extends "main.html" %}
+{% block content %}
 <html>
 	<head>
-		<!--<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">-->
+		<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
 	</head>
 	<body>
 		<div class="pane">
 			<div class="header">
-				<h1>{{category.name}}</h1>
-				<h3>{{category.description}}</h3>
 			</div>
 
-			<h4>
-				<a href = "{{url_for('editCategory',category_name = category.name)}}">Edit Category</a></h4>
-			<h4>
-			<a href = "{{url_for('deleteCategory',category_name = category.name)}}">Delete Category</a></h4>
+			<div class="flash">
+				{% with messages = get_flashed_messages() %}
+				{% if messages %}
 
-			<a href = "{{url_for('newCategoryItem', category_name=category.name)}}"> <h3> Create a New Item </h3> </a>
+				<ul>
+				{% for message in messages %}
+					<li> <strong> {{message}}</strong></li>
+				{% endfor %}
+				</ul>
+				{% endif %}
+			{% endwith %}
+			</div>
 
-			{% for item in items %}
-			<a href = "{{url_for('showCategoryItem', item_name=item.name, category_name=category.name)}}"> <p class="itemName">{{item.name}}</p></a>
-			{% endfor %}
+			<div class="row-fluid">
+				<div class="col-md-12 newcat">
+					<h1>{{category.name}}</h1>
+					<h3>Description:</h3><p>{{category.description}}</p>
+
+					<h4>
+					<a href = "{{url_for('editCategory',category_name = category.name)}}">Edit Category</a>
+					</h4>
+
+					<p></p>
+
+					<h4>
+					<a href = "{{url_for('deleteCategory',category_name = category.name)}}">Delete Category</a>
+					</h4>
+
+					<h3>Items:</h3>
+					{% for item in items %}
+					<a href = "{{url_for('showCategoryItem', item_name=item.name, category_name=category.name)}}"> <p class="itemName">{{item.name}}</p></a>
+					{% endfor %}
+
+					<a href = "{{url_for('newCategoryItem', category_name=category.name)}}">Create a New Item</a>
+					
+				</div>
+
+			</div>
+
+			
 
 			
 
 		</div>
 	</body>
 </html>
+{% endblock %}

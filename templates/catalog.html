@@ -1,3 +1,6 @@
+{% include "header.html" %}
+{% extends "main.html" %}
+{% block content %}
 <html>
 	<head>
 		<!--<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">-->
@@ -5,15 +8,45 @@
 	<body>
 		<div class="pane">
 			<div class="header">
-				<h1>Categories</h1>
 			</div>
 
-			{% for category in categorys %}
-			<a href = "{{url_for('showCategory', category_name = category.name)}}"> <p class="categoryName">{{category.name}}</p></a>
-			{% endfor %}
+			<div class="flash">
+				{% with messages = get_flashed_messages() %}
+				{% if messages %}
 
-			<a href = "{{url_for('newCategory')}}"> <h3> Create a New Category </h3> </a>
+				<ul>
+				{% for message in messages %}
+					<li> <strong> {{message}}</strong></li>
+				{% endfor %}
+				</ul>
+				{% endif %}
+			{% endwith %}
+			</div>
 
+			<div class="row-fluid">
+				<div class="col-md-12 newcat">
+					<h1>Categories</h1>
+					{% for category in categorys %}
+					<a href = "{{url_for('showCategory', category_name = category.name)}}"> <p class="categoryName">{{category.name}}</p></a>
+					{% endfor %}
+
+						<a href = "{{url_for('newCategory')}}"> Create a New Category</a>
+				</div>
+
+				<!--
+				<div class="col-md-8">
+					{% for category in categorys %}
+						{% for item in items %}
+						<a href = "{{url_for('showCategoryItem', item_name=item.name, category_name=category.name)}}"> <p class="categoryName">{{item.name}}</p></a>
+						{% endfor %}
+					{% endfor %}
+				</div>
+
+				-->
+				
+			</div>
 		</div>
 	</body>
 </html>
+
+{% endblock %}

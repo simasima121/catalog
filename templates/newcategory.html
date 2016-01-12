@@ -1,21 +1,45 @@
+{% include "header.html" %}
+{% extends "main.html" %}
+{% block content %}
 <html>
 	<head>
-		<!--<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">-->
+		<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
 	</head>
 	<body>
-	<div class="pane">
-		<div class="header">
-			<h1>New Category</h1>
+		<div class="pane">
+			<div class="header">
+				
+			</div>
+
+			<div class="flash">
+					{% with messages = get_flashed_messages() %}
+					{% if messages %}
+
+					<ul>
+					{% for message in messages %}
+						<li> <strong> {{message}}</strong></li>
+					{% endfor %}
+					</ul>
+					{% endif %}
+				{% endwith %}
+			</div>
+
+			<div class="row-fluid">
+				<div class="col-md-12 newcat">
+					<h1>New Category</h1>
+					<form action="#" method='POST'>
+						<p>Name:</p>
+							<input type='text' size='30' name='name' placeholder="Enter New Name">
+						<p></p>
+						<p>Description:</p>
+							<input type='text' size='30' name='description' placeholder="Enter Category Description">
+						<p></p>
+						<input type='submit' value='Submit'>
+						<a href='{{url_for('showCatalog')}}'><h3 class="cancelling">Cancel</h3></a>
+					</form>
+				</div>
+			</div>
 		</div>
-		
-		<form action="#" method='POST'>
-			<p>Name:</p>
-				<input type='text' size='30' name='name' placeholder="Enter New Name">
-			<p>Description:</p>
-				<input type='text' size='30' name='description' placeholder="Enter Category Description">
-			<input type='submit' value='Submit'>
-			<a href='{{url_for('showCatalog')}}'>Cancel</a>
-		</form>
-	</div>
 	</body>
 </html>
+{% endblock %}

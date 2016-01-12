@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, CategoryItem
@@ -10,6 +10,7 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
 
 
 #JSON APIs to view Catalog Info
@@ -35,19 +36,31 @@ def catalogJSON():
 @app.route('/catalog/')
 def showCatalog():
 	categorys = session.query(Category).all()
-	return render_template('catalog.html', categorys = categorys)
+	#items = session.query(CategoryItem).order_by(CategoryItem.id.desc()).all()
+	items = session.query(CategoryItem).all()
+	return render_template('catalog.html', categorys = categorys, items=items)
 
 
 #Create new Category
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def newCategory():
+	exist = False
 	if request.method == 'POST':
-		  newCategory = Category(name=request.form['name'], description=request.form['description'])
-		  session.add(newCategory)
-		  session.commit()
-		  return redirect(url_for('showCatalog'))
+  		categorys = session.query(Category).all()
+		for c in categorys:
+			category_n = c.name
+			if request.form['name'] == category_n:
+				exist = True
+		if exist == False:
+	  		newCategory = Category(name=request.form['name'], description=request.form['description'])
+	  		session.add(newCategory)
+	  		session.commit()
+			flash("New Category %s Successfully Created!" % newCategory.name)
+		else:
+			flash("New Category Unsuccessfully Created As Category Name Already Exists")
+	  	return redirect(url_for('showCatalog'))
 	else:
-		  return render_template('newcategory.html')	
+	  	return render_template('newcategory.html')	
 
 
 #Show category items
@@ -64,13 +77,23 @@ def showCategory(category_name):
 @app.route('/catalog/<category_name>/edit/', methods=['GET', 'POST'])
 def editCategory(category_name):
 	editedCategory = session.query(Category).filter_by(name=category_name).one()
+	exist = False
 	if request.method == 'POST':
-		if request.form['name']:
+		categorys = session.query(Category).all()
+		for c in categorys:
+			category_n = c.name
+			if request.form['name'] == category_n:
+				exist = True
+		if exist == False:
 			editedCategory.name = request.form['name']
 		if request.form['description']:
 			editedCategory.description = request.form['description']
 		session.add(editedCategory)
 		session.commit()
+		if exist == False:
+			flash("%s Successfully Edited!" % editedCategory.name)
+		else:
+			flash("%s Unsuccessfully Edited As Category Name Already Exists" % editedCategory.name)
 		return redirect(url_for('showCatalog'))
 	else:
 		return render_template('editcategory.html', category = editedCategory)	
@@ -83,6 +106,7 @@ def deleteCategory(category_name):
 	if request.method == 'POST':
 		session.delete(categoryToDelete)
 		session.commit()
+		flash("Category %s Successfully Deleted!" % categoryToDelete.name)
 		return redirect(url_for('showCatalog'))
 	else:
 		return render_template('deletecategory.html', category = categoryToDelete)	
@@ -94,12 +118,21 @@ def deleteCategory(category_name):
 def newCategoryItem(category_name):
 	category = session.query(Category).filter_by(name=category_name).one()
 	category_id = category.id
+	exist = False
 	if request.method == 'POST':
-		newItem = CategoryItem(name=request.form['name'], description=request.form['description'],
+		items = session.query(CategoryItem).all()
+		for i in items:
+			item_name = i.name
+			if request.form['name'] == item_name:
+				exist = True
+		if exist == False:
+			newItem = CategoryItem(name=request.form['name'], description=request.form['description'],
 									  category_id=category_id)
-		session.add(newItem)
-		session.commit()
-
+			session.add(newItem)
+			session.commit()
+			flash("New Item %s Successfully Created" % newItem.name)
+		else:
+			flash("New Item Unsuccessfully Created As Item Name Already Exists")
 		return redirect(url_for('showCategory', category_name=category_name))
 	else:
 		return render_template('newitem.html', category_name = category_name)	
@@ -117,13 +150,23 @@ def showCategoryItem(category_name, item_name):
 @app.route('/catalog/<category_name>/<item_name>/edit/', methods=['GET', 'POST'])
 def editCategoryItem(category_name, item_name):
 	editedItem = session.query(CategoryItem).filter_by(name=item_name).one()
+	exist = False
 	if request.method == 'POST':
-		if request.form['name']:
+		items = session.query(CategoryItem).all()
+		for i in items:
+			item_name = i.name
+			if request.form['name'] == item_name:
+				exist = True
+		if exist == False:
 			editedItem.name = request.form['name']
 		if request.form['description']:
 			editedItem.description = request.form['description']
 		session.add(editedItem)
 		session.commit()
+		if exist == False:
+			flash("%s Successfully Edited!" % editedItem.name)
+		else:
+			flash("%s Unsuccessfully Edited As Item Name Already Exists" % editedItem.name)
 		return redirect(url_for('showCategory', category_name=category_name))
 	else:
 		return render_template('edititem.html', category_name=category_name, item_name=item_name, item=editedItem)
@@ -136,10 +179,12 @@ def deleteCategoryItem(category_name, item_name):
 	if request.method == 'POST':
 		session.delete(itemToDelete)
 		session.commit()
+		flash("Item %s Successfully Deleted!" % itemToDelete.name)
 		return redirect(url_for('showCategory', category_name=category_name))
 	else:
 		return render_template('deleteitem.html', category_name=category_name, item_name=item_name, item=itemToDelete)
 
 if __name__ == '__main__':
-	 app.debug = True
-	 app.run(host='0.0.0.0', port = 8000)
+	app.secret_key = 'super_secret_key'
+	app.debug = True
+	app.run(host='0.0.0.0', port = 8000)
