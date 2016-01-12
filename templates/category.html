@@ -29,12 +29,7 @@
 					<h3>Description:</h3><p>{{category.description}}</p>
 
 					<h4>
-					<a href = "{{url_for('editCategory',category_name = category.name)}}">Edit Category</a>
-					</h4>
-
-					<p></p>
-
-					<h4>
+					<a href = "{{url_for('editCategory',category_name = category.name)}}">Edit Category</a> |
 					<a href = "{{url_for('deleteCategory',category_name = category.name)}}">Delete Category</a>
 					</h4>
 

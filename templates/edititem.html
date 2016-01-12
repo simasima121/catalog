@@ -20,8 +20,9 @@
 							<p></p>
 						<p>Description:</p>
 							<input type ='text' size='30' name='description' placeholder = '{{item.description}}'>
+							<p></p>
 						<input type='submit' value='Edit'>
-						<a href = '{{url_for('showCategoryItem', item_name=item.name, category_name=category_name)}}'> Cancel </a>
+						<a href = '{{url_for('showCategoryItem', item_name=item.name, category_name=category_name)}}'> <h3 class="cancelling">Cancel</h3> </a>
 					</form>
 				</div>
 			</div>
