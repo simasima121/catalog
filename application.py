@@ -223,8 +223,8 @@ def fbconnect():
 	login_session['facebook_id'] = data["id"]
 
 	# The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
- 	stored_token = token.split("=")[1]
- 	login_session['access_token'] = stored_token
+	stored_token = token.split("=")[1]
+	login_session['access_token'] = stored_token
 
 	# Get user picture
 	url = 'https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200&width=200' % token
@@ -254,19 +254,41 @@ def fbconnect():
 
 @app.route('/fbdisconnect/')
 def fbdisconnect():
- 	facebook_id = login_session['facebook_id']
- 	# The access token must be included to successfully logout
- 	access_token = login_session['access_token']
- 	url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
- 	h = httplib2.Http()
- 	result = h.request(url, 'DELETE')[1]
- 	# Reset the user's sesson.
+	facebook_id = login_session.get('facebook_id')
+	if facebook_id is None:
+		response = make_response(
+			json.dumps('Current user not connected.'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	# The access token must be included to successfully logout
+	access_token = login_session['access_token']
+	url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+	h = httplib2.Http()
+	result = h.request(url, 'DELETE')[1]
+	# Reset the user's sesson.
 	del login_session['username']
 	del login_session['email']
 	del login_session['picture']
 	del login_session['user_id']
 	del login_session['facebook_id']
- 	return "Successfully disconnected."
+	return "Successfully disconnected."
+
+@app.route('/disconnect/')
+def disconnect():
+	if 'provider' in login_session:
+		if login_session['provider'] == 'google':
+			gdisconnect()
+
+		if login_session['provider'] == 'facebook':
+			fbdisconnect()
+
+		del login_session['provider']
+			
+		flash("You have successfully been logged out")
+		return redirect(url_for('showCatalog'))
+	else:
+		flash("You were not logged in to begin with!")
+		return redirect(url_for('showCatalog'))
 
 
 #JSON APIs to view Catalog Info
