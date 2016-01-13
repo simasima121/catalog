@@ -13,11 +13,9 @@
 				<div class="col-md-12 newcat">
 					<h1>{{item.name}}</h1>
 					<h3>Description:</h3><p>{{item.description}}</p>
-
-					<h4><a href = "{{url_for('editCategoryItem', item_name=item.name, category_name=category.name)}}">Edit Item</a> |
-					<a href = "{{ url_for('deleteCategoryItem',item_name=item.name, category_name=category.name)}}">Delete Item</a></h4>
 				</div>
 			</div>
+			
 		</div>
 	</body>
 </html>
