@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Category, CategoryItem
+from database_setup import Base, Category, CategoryItem, User
 
 #uses flask session as login_session works as dictonary, stores values for longevity of users access
 from flask import session as login_session
@@ -22,7 +22,7 @@ CLIENT_ID = json.loads(
 	 open('client_secrets.json', 'r').read())['web']['client_id']
 
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('sqlite:///catalogwithusers.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -111,6 +111,11 @@ def gconnect():
 	login_session['picture'] = data['picture']
 	login_session['email'] = data['email']
 
+	#see if user exists, if not make a new user
+	user_id = getUserID(data['email'])
+	if not user_id:
+		user_id = createUser(login_session)
+	login_session['user_id'] = user_id
 
 	output = ''
 	output += '<h1>Welcome, '
@@ -123,6 +128,24 @@ def gconnect():
 	print "done!"
 	return output
 
+# User Helper Functions
+def createUser(login_session):
+	newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+	session.add(newUser)
+	session.commit()
+	user = session.query(User).filter_by(email=login_session['email']).one()
+	return user.id
+
+def getUserInfo(user_id):
+	user = session.query(User).filter_by(id=user_id).one()
+	return user
+
+def getUserID(email):
+	try:
+		user = session.query(User).filter_by(email=email).one()
+		return user.id
+	except:
+		return None
 
 #DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect/')
@@ -206,7 +229,7 @@ def newCategory():
 			if request.form['name'] == category_n:
 				exist = True
 		if exist == False:
-			newCategory = Category(name=request.form['name'], description=request.form['description'])
+			newCategory = Category(name=request.form['name'], description=request.form['description'], user_id=login_session['user_id'])
 			session.add(newCategory)
 			session.commit()
 			flash("New Category %s Successfully Created!" % newCategory.name)
@@ -290,7 +313,7 @@ def newCategoryItem(category_name):
 				exist = True
 		if exist == False:
 			newItem = CategoryItem(name=request.form['name'], description=request.form['description'],
-									  category_id=category_id)
+									  category_id=category_id, user_id=login_session['user_id'])
 			session.add(newItem)
 			session.commit()
 			flash("New Item %s Successfully Created" % newItem.name)
@@ -306,10 +329,12 @@ def newCategoryItem(category_name):
 def showCategoryItem(category_name, item_name):
 	category = session.query(Category).filter_by(name=category_name).one()
 	item = session.query(CategoryItem).filter_by(name=item_name).one()
-	if 'username' not in login_session:
-		return render_template('publicitem.html', item=item, category=category)
+	creator = getUserInfo(item.user_id)
+
+	if 'username' not in login_session or creator.id != login_session['user_id']:
+		return render_template('publicitem.html', item=item, category=category, creator = creator)
 	else:
-		return render_template('item.html', item=item, category=category)
+		return render_template('item.html', item=item, category=category, creator=creator)
 
 
 #Edit category item
@@ -318,6 +343,8 @@ def editCategoryItem(category_name, item_name):
 	if 'username' not in login_session:
 		return redirect('/login/')
 	editedItem = session.query(CategoryItem).filter_by(name=item_name).one()
+	if editedItem.user_id != login_session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()''>"
 	exist = False
 	if request.method == 'POST':
 		items = session.query(CategoryItem).all()
@@ -346,6 +373,8 @@ def deleteCategoryItem(category_name, item_name):
 	if 'username' not in login_session:
 		return redirect('/login/')
 	itemToDelete = session.query(CategoryItem).filter_by(name=item_name).one()
+	if itemToDelete.user_id != login_session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to delete this item. Please create your own item in order to delete.')} </script><body onload='myFunction()''>"
 	if request.method == 'POST':
 		session.delete(itemToDelete)
 		session.commit()

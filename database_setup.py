@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+#needed for authorisation stuff
 class User(Base):
 	__tablename__ = 'user'
 
@@ -41,6 +42,7 @@ class CategoryItem(Base):
 	name = Column(String(80), nullable=False)
 	id = Column(Integer, primary_key=True)
 	description = Column(String(250),nullable=False)
+
 	category_id = Column(Integer, ForeignKey('category.id'))
 	category = relationship(Category)
 	user_id = Column(Integer, ForeignKey('user.id'))
@@ -55,6 +57,6 @@ class CategoryItem(Base):
 			'description'	: self.description,
 		}
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('sqlite:///catalogwithusers.db')
 
 Base.metadata.create_all(engine)

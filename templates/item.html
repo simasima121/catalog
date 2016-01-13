@@ -11,7 +11,12 @@
 
 			<div class="row-fluid">
 				<div class="col-md-12 newcat">
-					<h1>{{item.name}}</h1>
+					<h1>{{item.name}}
+						<figure class="creator">
+							<img src="{{ url_for('static', filename='blank_user.gif') }}">
+							<figcaption>{{ creator.name }}</figcaption>
+						</figure>
+					</h1>
 					<h3>Description:</h3><p>{{item.description}}</p>
 
 					<h4><a href = "{{url_for('editCategoryItem', item_name=item.name, category_name=category.name)}}">Edit Item</a> |

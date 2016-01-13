@@ -11,7 +11,12 @@
 
 			<div class="row-fluid">
 				<div class="col-md-12 newcat">
-					<h1>{{item.name}}</h1>
+					<h1>{{item.name}}
+						<figure class="creator">
+							<img src="{{ creator.picture}}">
+							<figcaption>{{ creator.name }}</figcaption>
+						</figure>
+					</h1>
 					<h3>Description:</h3><p>{{item.description}}</p>
 				</div>
 			</div>
