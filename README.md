@@ -1,8 +1,8 @@
 #Project: Catalog App 
-================================
+
 
 ##Files and Directories Downloaded
------------------------------------
+
 Within the download you'll find the following directory and files:
 
 catalog/
@@ -12,13 +12,13 @@ catalog/
 
 
 ##Required Libraries and Dependencies
------------------------------------
+
 * Make sure you have `python` installed [requires Python v2.7 to be installed]
 * Requires 'Vagrant VM' to be installed and configured
 
 
 ##How to Run Project
-------------------
+
 ### Run the virtual machine!
 
 * Using the terminal, change directory to catalogofthings (**cd catalogofthings**)
@@ -36,5 +36,5 @@ catalog/
 
 
 ##Miscellaneous
--------------
+
 To log into Facebook and Google, must create own app on their developer pages as my client secrets won't work here
