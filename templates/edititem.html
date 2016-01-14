@@ -16,10 +16,10 @@
 					<h1> Edit Item: {{item.name}} </h1>
 					<form action="{{ url_for('editCategoryItem', item_name=item.name, category_name=category_name)}}" method = 'post'>
 						<p>Name:</p>
-							<input type ='text' size='30' name='name' placeholder = '{{item.name }}'>
+							<input type ='text' size='30' name='name' value = '{{item.name }}'>
 							<p></p>
 						<p>Description:</p>
-							<input type ='text' size='30' name='description' placeholder = '{{item.description}}'>
+							<input type ='text' size='30' name='description' value = '{{item.description}}'>
 							<p></p>
 						<input type='submit' value='Edit'>
 						<a href = '{{url_for('showCategoryItem', item_name=item.name, category_name=category_name)}}'> <h3 class="cancelling">Cancel</h3> </a>

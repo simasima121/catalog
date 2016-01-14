@@ -1,24 +1,47 @@
 #Project: Catalog App 
-================================
+
 
 ##Files and Directories Downloaded
------------------------------------
+
 Within the download you'll find the following directory and files:
 
-catalog/
-├── tournament.py
-├── tournament.sql
-├── tournament_test.py
+* static
+   - blank_user.gif
+   - style.css
+* templates
+   - catalog.html
+   - category.html
+   - deletecategory.html
+   - deleteitem.html
+   - editcategory.html
+   - edititem.html
+   - header.html
+   - item.html
+   - login.html
+   - main.html
+   - newcategory.html
+   - newitem.html
+   - publiccatalog.html
+   - publiccategory.html
+   - publicitem.html
+* application.py
+* database_setup.py
+* lotsofcategories.py
+* userslotsofcategories.py
+* READme.md
+
+
+
 
 
 ##Required Libraries and Dependencies
------------------------------------
+
 * Make sure you have `python` installed [requires Python v2.7 to be installed]
 * Requires 'Vagrant VM' to be installed and configured
 
 
 ##How to Run Project
-------------------
+
 ### Run the virtual machine!
 
 * Using the terminal, change directory to catalogofthings (**cd catalogofthings**)
@@ -36,5 +59,5 @@ catalog/
 
 
 ##Miscellaneous
--------------
+
 To log into Facebook and Google, must create own app on their developer pages as my client secrets won't work here

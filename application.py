@@ -1,18 +1,21 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify, url_for\
+ 						,flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, CategoryItem, User
 
-#uses flask session as login_session works as dictonary, stores values for longevity of users access
+# uses flask session as login_session works as dictonary, stores values for
+# longevity of users access
 from flask import session as login_session
 import random, string
 
-#stores client secrets
+# stores client secrets
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
-#onverts return value from function into real response object that we can send to client
+# converts return value from function into real response object that we can
+# send to client
 from flask import make_response
 import requests
 
@@ -90,7 +93,8 @@ def gconnect():
 	stored_credentials = login_session.get('credentials')
 	stored_gplus_id = login_session.get('gplus_id')
 	if stored_credentials is not None and gplus_id == stored_gplus_id:
-		response = make_response(json.dumps('Current user is already connected.'), 200)
+		response = make_response(
+			json.dumps('Current user is already connected.'), 200)
 		response.headers['Content-Type'] = 'application/json'
 		return response
 
@@ -98,7 +102,7 @@ def gconnect():
 	login_session['provider'] = 'google'
 	login_session['credentials'] = credentials
 	login_session['gplus_id'] = gplus_id
-	response =  make_response(json.dumps('Successfully connected user'), 200)
+	response = make_response(json.dumps('Successfully connected user'), 200)
 
 	# Get user info
 	userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -123,14 +127,16 @@ def gconnect():
 	output += '!</h1>'
 	output += '<img src="'
 	output += login_session['picture']
-	output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+	output += ' " style = "width: 300px; height: 300px;border-radius:  '
+	output += '150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'
 	flash("You Are Now Logged In As %s" % login_session['username'])
 	print "done!"
 	return output
 
 # User Helper Functions
 def createUser(login_session):
-	newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+	newUser = User(name=login_session['username'], email=login_session['email'],
+	 			picture=login_session['picture'])
 	session.add(newUser)
 	session.commit()
 	user = session.query(User).filter_by(email=login_session['email']).one()
@@ -196,7 +202,9 @@ def fbconnect():
 	access_token = request.data
 	#return "The current session state is %s" % login_session['state']
 
-	#Exchange client token for long-lived server-side token with GET /oauth/access_token?grant-type=fb_exchange_token&client_id={app-id}&client_secret={app-secret}&fb_exchange_token={short-lived-token}
+	# Exchange client token for long-lived server-side token with GET 
+	# /oauth/access_token?grant-type=fb_exchange_token&client_id={app-id}&
+	# client_secret={app-secret}&fb_exchange_token={short-lived-token}
 	app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
 		  'web']['app_id']
 	app_secret = json.loads(
@@ -222,7 +230,8 @@ def fbconnect():
 	login_session['email'] = data["email"]
 	login_session['facebook_id'] = data["id"]
 
-	# The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+	# The token must be stored in the login_session in order to properly logout,
+	# let's strip out the information before the equals sign in our token
 	stored_token = token.split("=")[1]
 	login_session['access_token'] = stored_token
 
@@ -242,12 +251,13 @@ def fbconnect():
 	login_session['user_id'] = user_id
 
 	output = ''
-	output += '<h1>Welcome, '
+	output += '<h1>Welcome '
 	output += login_session['username']
 	output += '!</h1>'
 	output += '<img src="'
 	output += login_session['picture']
-	output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+	output += ' " style = "width: 300px; height: 300px;border-radius:  '
+	output += '150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'	
 	flash("You Are Now Logged In As %s" % login_session['username'])
 	print "done!"
 	return output
@@ -262,7 +272,8 @@ def fbdisconnect():
 		return response
 	# The access token must be included to successfully logout
 	access_token = login_session['access_token']
-	url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+	url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (
+			facebook_id,access_token)
 	h = httplib2.Http()
 	result = h.request(url, 'DELETE')[1]
 	# Reset the user's sesson.
@@ -333,7 +344,9 @@ def newCategory():
 			if request.form['name'] == category_n:
 				exist = True
 		if exist == False:
-			newCategory = Category(name=request.form['name'], description=request.form['description'], user_id=login_session['user_id'])
+			newCategory = Category(name=request.form['name'], 
+				description=request.form['description'], 
+				user_id=login_session['user_id'])
 			session.add(newCategory)
 			session.commit()
 			flash("New Category %s Successfully Created!" % newCategory.name)
@@ -352,7 +365,8 @@ def showCategory(category_name):
 	category_id = category.id
 	items= session.query(CategoryItem).filter_by(category_id = category_id).all()
 	if 'username' not in login_session:
-		return render_template('publiccategory.html', category = category, items=items)
+		return render_template('publiccategory.html', category = category,
+		 		items=items)
 	else:
 		return render_template('category.html', category = category, items=items)	
 
@@ -379,7 +393,8 @@ def editCategory(category_name):
 		if exist == False:
 			flash("%s Successfully Edited!" % editedCategory.name)
 		else:
-			flash("%s Unsuccessfully Edited As Category Name Already Exists" % editedCategory.name)
+			flash("%s Unsuccessfully Edited As Category Name Already Exists" %
+			 editedCategory.name)
 		return redirect(url_for('showCatalog'))
 	else:
 		return render_template('editcategory.html', category = editedCategory)	
@@ -416,8 +431,10 @@ def newCategoryItem(category_name):
 			if request.form['name'] == item_name:
 				exist = True
 		if exist == False:
-			newItem = CategoryItem(name=request.form['name'], description=request.form['description'],
-									  category_id=category_id, user_id=login_session['user_id'])
+			newItem = CategoryItem(name=request.form['name'], 
+									  	description=request.form['description'],
+								  		category_id=category_id,
+								  		user_id=login_session['user_id'])
 			session.add(newItem)
 			session.commit()
 			flash("New Item %s Successfully Created" % newItem.name)
@@ -436,9 +453,11 @@ def showCategoryItem(category_name, item_name):
 	creator = getUserInfo(item.user_id)
 
 	if 'username' not in login_session or creator.id != login_session['user_id']:
-		return render_template('publicitem.html', item=item, category=category, creator = creator)
+		return render_template('publicitem.html', item=item, category=category,
+		 creator = creator)
 	else:
-		return render_template('item.html', item=item, category=category, creator=creator)
+		return render_template('item.html', item=item, category=category,
+		 creator=creator)
 
 
 #Edit category item
@@ -468,7 +487,8 @@ def editCategoryItem(category_name, item_name):
 			flash("%s Unsuccessfully Edited As Item Name Already Exists" % editedItem.name)
 		return redirect(url_for('showCategory', category_name=category_name))
 	else:
-		return render_template('edititem.html', category_name=category_name, item_name=item_name, item=editedItem)
+		return render_template('edititem.html', category_name=category_name, 
+			item_name=item_name, item=editedItem)
 
 
 #Delete category item
@@ -485,7 +505,8 @@ def deleteCategoryItem(category_name, item_name):
 		flash("Item %s Successfully Deleted!" % itemToDelete.name)
 		return redirect(url_for('showCategory', category_name=category_name))
 	else:
-		return render_template('deleteitem.html', category_name=category_name, item_name=item_name, item=itemToDelete)
+		return render_template('deleteitem.html', category_name=category_name,
+		 item_name=item_name, item=itemToDelete)
 
 if __name__ == '__main__':
 	app.secret_key = 'super_secret_key'
